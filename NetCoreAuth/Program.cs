@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using NetCoreAuth.AuthRequirements;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,6 +9,18 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme,
         options => builder.Configuration.Bind("CookieSettings", options));
+
+builder.Services.AddAuthorization(config =>
+{
+    // Policy base role check
+    config.AddPolicy("MultiRoles", policyBuilder => { policyBuilder.RequireRole("Backend", "Admin"); });
+    config.AddPolicy("Birth", policyBuilder =>
+    {
+        policyBuilder.RequireCustomClaim(ClaimTypes.DateOfBirth);
+    });
+});
+
+builder.Services.AddScoped<IAuthorizationHandler, BirthRequireClaimHandler>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
