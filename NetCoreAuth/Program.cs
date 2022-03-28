@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using NetCoreAuth.AuthRequirements;
+using NetCoreAuth.Controllers;
 using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +22,7 @@ builder.Services.AddAuthorization(config =>
 });
 
 builder.Services.AddScoped<IAuthorizationHandler, BirthRequireClaimHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, CookieJarAuthorizationHandler>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
