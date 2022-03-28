@@ -9,6 +9,10 @@ namespace NetCoreAuth.Controllers
     [Route("[controller]/[action]")]
     public class CookieController : ControllerBase
     {
+        public CookieController()
+        {
+        }
+
         [HttpGet]
         public IActionResult Login()
         {
@@ -122,11 +126,49 @@ namespace NetCoreAuth.Controllers
             return RedirectToAction("RoleSecret");
         }
 
+        /// <summary>
+        /// Get the Claim with Hey
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> AuthenitcateHeyAsync()
+        {
+            var claims = new List<Claim>()
+            {
+                new Claim("Hey", "Nice to meet you")
+            };
+
+            var identity = new ClaimsIdentity(claims, "Hey Identity");
+
+            var principal = new ClaimsPrincipal(identity);
+
+            await HttpContext.SignInAsync(principal);
+
+            return RedirectToAction("DoSomething");
+        }
+
         [HttpGet]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync();
             return RedirectToAction("Login");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DoSomething(
+            [FromServices] IAuthorizationService authorizationService)
+        {
+            var builder = new AuthorizationPolicyBuilder("Schema");
+            var customPolicy = builder.RequireClaim("Hey").Build();
+
+            var authResult = await authorizationService.AuthorizeAsync(User, customPolicy);
+
+            if (authResult.Succeeded)
+            {
+                return Ok("You got hey");
+            }
+
+            return BadRequest(authResult);
         }
     }
 }
