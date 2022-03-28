@@ -1,14 +1,42 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
 using NetCoreAuth.AuthRequirements;
 using NetCoreAuth.Controllers;
 using NetCoreAuth.PolicyProvider;
 using System.Security.Claims;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,
+        options =>
+        {
+            var secretBytes = Encoding.UTF8.GetBytes(NetCoreAuth.Constants.Secret);
+            var key = new SymmetricSecurityKey(secretBytes);
+
+            options.Events = new JwtBearerEvents()
+            {
+                OnMessageReceived = context =>
+                {
+                    if (context.Request.Query.ContainsKey("access_token"))
+                    {
+                        context.Token = context.Request.Query["access_token"];
+                    }
+                    return Task.CompletedTask;
+                }
+            };
+
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidIssuer = NetCoreAuth.Constants.Issuer,
+                ValidAudience = NetCoreAuth.Constants.Audiance,
+                IssuerSigningKey = key,
+            };
+        })
     .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme,
         options => builder.Configuration.Bind("CookieSettings", options));
 
