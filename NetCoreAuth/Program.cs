@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using NetCoreAuth.AuthRequirements;
 using NetCoreAuth.Controllers;
+using NetCoreAuth.PolicyProvider;
 using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +21,9 @@ builder.Services.AddAuthorization(config =>
         policyBuilder.RequireCustomClaim(ClaimTypes.DateOfBirth);
     });
 });
+
+builder.Services.AddSingleton<IAuthorizationPolicyProvider, MyAuthorizationPolicyProvider>();
+builder.Services.AddScoped<IAuthorizationHandler, SecurityLevelHandler>();
 
 builder.Services.AddScoped<IAuthorizationHandler, BirthRequireClaimHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, CookieJarAuthorizationHandler>();

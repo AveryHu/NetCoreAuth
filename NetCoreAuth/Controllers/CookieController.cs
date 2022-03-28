@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NetCoreAuth.PolicyProvider;
 using System.Security.Claims;
 
 namespace NetCoreAuth.Controllers
@@ -61,6 +62,50 @@ namespace NetCoreAuth.Controllers
         public IActionResult MultiRoleSecret()
         {
             return Ok("This is MultiRole protected content");
+        }
+
+        /// <summary>
+        /// This API can bee accessed by Rank equals to 3
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Authorize(Policy = "Rank.3")]
+        public IActionResult Rank3Secret()
+        {
+            return Ok("This is Rank 3 protected content");
+        }
+
+        /// <summary>
+        /// This API can bee accessed by Rank equals to 7
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Authorize(Policy = "Rank.7")]
+        public IActionResult Rank7Secret()
+        {
+            return Ok("This is Rank 7 protected content");
+        }
+
+        /// <summary>
+        /// This API can bee accessed by SecurityLevel equals to or upper than 5
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [SecurityLevel(5)]
+        public IActionResult SecutiryLevel5Secret()
+        {
+            return Ok("This is SecutiryLevel 5 protected content");
+        }
+
+        /// <summary>
+        /// This API can bee accessed by SecurityLevel equals to or upper than 10
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [SecurityLevel(10)]
+        public IActionResult SecutiryLevel10Secret()
+        {
+            return Ok("This is SecutiryLevel 10 protected content");
         }
 
         /// <summary>
@@ -145,6 +190,40 @@ namespace NetCoreAuth.Controllers
             await HttpContext.SignInAsync(principal);
 
             return RedirectToAction("DoSomething");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AuthenitcateSecurityLevel8Async()
+        {
+            var claims = new List<Claim>()
+            {
+                new Claim(DynamicPolicies.SecurityLevel, "8")
+            };
+
+            var identity = new ClaimsIdentity(claims, "SecurityLevel Identity");
+
+            var principal = new ClaimsPrincipal(identity);
+
+            await HttpContext.SignInAsync(principal);
+
+            return RedirectToAction("SecutiryLevel5Secret");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AuthenitcateRank7Async()
+        {
+            var claims = new List<Claim>()
+            {
+                new Claim("Rank", "7")
+            };
+
+            var identity = new ClaimsIdentity(claims, "Rank Identity");
+
+            var principal = new ClaimsPrincipal(identity);
+
+            await HttpContext.SignInAsync(principal);
+
+            return RedirectToAction("Rank7Secret");
         }
 
         [HttpGet]
