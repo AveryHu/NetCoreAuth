@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Server.Controllers
 {
@@ -7,6 +8,12 @@ namespace Server.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+
+        [Authorize]
+        public IActionResult Secret()
+        {
+            return Ok("Server secret");
         }
     }
 }

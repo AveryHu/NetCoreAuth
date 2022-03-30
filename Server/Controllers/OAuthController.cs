@@ -74,7 +74,9 @@ namespace Server.Controllers
                 Constants.Audiance,
                 claims,
                 notBefore: DateTime.Now,
-                expires: DateTime.Now.AddMinutes(1),
+                expires: grant_type == "refresh_token"
+                    ? DateTime.Now.AddSeconds(30)
+                    : DateTime.Now.AddSeconds(10),
                 signingCredentials);
 
             var access_token = new JwtSecurityTokenHandler().WriteToken(token);
@@ -83,7 +85,8 @@ namespace Server.Controllers
             {
                 access_token,
                 token_type = "Bearer",
-                raw_claim = "OAuth"
+                raw_claim = "OAuth",
+                refresh_token = "ThisIsUseToRefresh"
             };
 
             return Ok(responseObject);
@@ -94,11 +97,29 @@ namespace Server.Controllers
         {
             if (HttpContext.Request.Headers.TryGetValue("Authorization", out var value))
             {
-                var token = value.ToString().Split(' ')[1];
-                return Ok();
-            }
+                var accessToken = value.ToString().Split(' ')[1];
 
+                var base64Payload = accessToken.Split('.')[1];
+                base64Payload = base64Payload.Replace('-', '+').Replace('_', '/').PadRight(4 * ((base64Payload.Length + 3) / 4), '=');
+                var bytes = Convert.FromBase64String(base64Payload);
+                var jsonPayload = Encoding.UTF8.GetString(bytes);
+                var claims = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonPayload);
+
+                if (claims.TryGetValue("exp", out string expireString))
+                {
+                    DateTime expireTime = UnixTimeStampToDateTime(double.Parse(expireString));
+
+                    return DateTime.Compare(DateTime.Now, expireTime) > 0 ? BadRequest() : Ok();
+                }
+            }
             return BadRequest();
+        }
+
+        public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
+        {
+            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
+            return dtDateTime;
         }
     }
 }

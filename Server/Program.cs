@@ -24,6 +24,14 @@ builder.Services.AddAuthentication("OAuth")
                             return Task.CompletedTask;
                         }
                     };
+
+                    config.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ClockSkew = TimeSpan.Zero,
+                        ValidIssuer = Constants.Issuer,
+                        ValidAudience = Constants.Audiance,
+                        IssuerSigningKey = key
+                    };
                 });
 
 builder.Services.AddControllersWithViews();
