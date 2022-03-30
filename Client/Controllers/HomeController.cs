@@ -6,6 +6,13 @@ namespace Client.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly HttpClient _client;
+
+        public HomeController(IHttpClientFactory httpClientFactory)
+        {
+            _client = httpClientFactory.CreateClient();
+        }
+
         [HttpGet]
         public IActionResult Index()
         {
@@ -13,7 +20,7 @@ namespace Client.Controllers
         }
 
         /// <summary>
-        /// Protected resource from resource server
+        /// Try to get protected resource
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -21,9 +28,14 @@ namespace Client.Controllers
         public async Task<IActionResult> Secret()
         {
             var token = await HttpContext.GetTokenAsync("access_token");
+
             var claims = HttpContext.User.Claims;
 
-            return Ok("Secret");
+            _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+
+            var response = await _client.GetAsync("https://localhost:7110/secret/needtoken");
+
+            return Ok(await response.Content.ReadAsStringAsync());
         }
     }
 }

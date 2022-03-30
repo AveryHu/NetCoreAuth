@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Client", "Client\Client.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server", "Server\Server.csproj", "{9FE0DA8D-518D-4628-A16E-1296AA4FF5A3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "API\API.csproj", "{42AD01E3-6CC4-4BA8-AB07-417F253AC36D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{9FE0DA8D-518D-4628-A16E-1296AA4FF5A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9FE0DA8D-518D-4628-A16E-1296AA4FF5A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9FE0DA8D-518D-4628-A16E-1296AA4FF5A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42AD01E3-6CC4-4BA8-AB07-417F253AC36D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42AD01E3-6CC4-4BA8-AB07-417F253AC36D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42AD01E3-6CC4-4BA8-AB07-417F253AC36D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42AD01E3-6CC4-4BA8-AB07-417F253AC36D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -42,6 +48,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{CC8EB11E-F3AC-4B60-B2B6-C4C8148C61DE} = {048BC6FA-742A-4DCE-AD1F-D892870E93F5}
 		{9FE0DA8D-518D-4628-A16E-1296AA4FF5A3} = {048BC6FA-742A-4DCE-AD1F-D892870E93F5}
+		{42AD01E3-6CC4-4BA8-AB07-417F253AC36D} = {048BC6FA-742A-4DCE-AD1F-D892870E93F5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FDCE4B81-F626-476B-8EB9-821D0C7BF1B6}

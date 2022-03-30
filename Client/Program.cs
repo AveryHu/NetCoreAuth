@@ -42,6 +42,8 @@ builder.Services.AddAuthentication(config =>
         };
     });
 
+builder.Services.AddHttpClient();
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();

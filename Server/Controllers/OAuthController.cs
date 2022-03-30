@@ -88,5 +88,17 @@ namespace Server.Controllers
 
             return Ok(responseObject);
         }
+
+        [HttpGet]
+        public IActionResult Verify()
+        {
+            if (HttpContext.Request.Headers.TryGetValue("Authorization", out var value))
+            {
+                var token = value.ToString().Split(' ')[1];
+                return Ok();
+            }
+
+            return BadRequest();
+        }
     }
 }
